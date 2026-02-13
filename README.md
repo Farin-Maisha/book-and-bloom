@@ -1,7 +1,7 @@
 
 
 
-# Book & Bloom   
+# Readora 
 An AI-Assisted  Digital Library Management System
 
 ---
@@ -21,7 +21,7 @@ An AI-Assisted  Digital Library Management System
 ##  Project Overview
 
 ###  Project Title
-**Book & Bloom – AI-Powered Digital Library System**
+**Readora – AI-Powered Digital Library System**
 
 ###  Objective
 The objective of this project is to build a smart and user-friendly digital library platform that simplifies book searching, reservation, and tracking while providing intelligent assistance through an AI chatbot. The system improves organization, reduces manual workload, and enhances user experience for readers and library administrators.
