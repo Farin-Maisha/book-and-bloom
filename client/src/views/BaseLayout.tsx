@@ -1,7 +1,5 @@
-import { ReactNode, useState } from "react";
-import { Button } from "react-bootstrap";
+import { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CreateSessionDialog } from "./CreateSessionDialog";
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -9,33 +7,48 @@ interface BaseLayoutProps {
 
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div className="layout">
-      <header className="d-flex align-items-center my-1 bg-light navbar-mx">
-        <h3>
-          <Link className="text-decoration-none text-dark" to="/">
-            Attendance
-          </Link>
-        </h3>
+      <header className="d-flex align-items-center px-4 py-3 bg-light shadow-sm">
+        <Link className="text-decoration-none text-dark" to="/">
+          <h3>📚 Book&Bloom</h3>
+        </Link>
         <div className="flex-grow-1"></div>
         <nav>
-          <ul className="nav">
+          <ul className="nav gap-2">
             <li className="nav-item">
-              <Button variant="outline-secondary" className="me-2" onClick={() => navigate("/sessions")}>
-                Sessions
-              </Button>
-              <Button variant="success" className="text-white" onClick={() => setIsCreateDialogOpen(true)}>
-                Create
-              </Button>
+              <Link className="nav-link" to="/">Home</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/books">Books</Link>
+            </li>
+            {token ? (
+              <li className="nav-item">
+                <button className="btn btn-outline-danger" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <button className="btn btn-outline-primary" onClick={() => navigate("/login")}>
+                  Login / Signup
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
       </header>
       <main id="content">{children}</main>
-
-      <CreateSessionDialog open={isCreateDialogOpen} setOpen={setIsCreateDialogOpen} />
+      <footer className="text-center py-3 text-muted">
+        www.book&bloom.com
+      </footer>
     </div>
   );
 };
