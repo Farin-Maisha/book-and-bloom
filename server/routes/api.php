@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +13,14 @@ use App\Http\Controllers\SessionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+use App\Http\Controllers\AuthController;
+
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->get('/dashboard', [AuthController::class, 'dashboard']);
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/session', [SessionController::class, 'getSession']);
-Route::post('/session', [SessionController::class, 'createSession'])->middleware('check.admin');
-Route::put('/session', [SessionController::class, 'updateSession'])->middleware('check.admin');
-Route::post('/sessions', [SessionController::class, 'viewSessions'])->middleware('check.admin');
-Route::post('/attendance', [SessionController::class, 'submitAttendance']);
