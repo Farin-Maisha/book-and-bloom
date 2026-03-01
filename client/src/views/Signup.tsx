@@ -15,19 +15,24 @@ export default function Signup() {
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    console.log("clicked!", input);
+    
     if (!input.name || !input.email || !input.password) {
       toast.error("Please fill in all fields");
       return;
     }
+
     setLoading(true);
     const data = await apiClient.signup(input.name, input.email, input.password);
+    console.log("Response:", data);
     setLoading(false);
 
     if (data?.user) {
       toast.success("Account created! Please login.");
       navigate("/login");
+    } else if (data?.message) {
+      toast.error(data.message);
     }
   };
 
