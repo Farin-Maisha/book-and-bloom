@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: book_bloom_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: smart_library
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: BookAndBloom
+        APP_ENV: local
+        APP_KEY: base64:/s9n3fdu8pp+3uqPzBOpjWsXQJ7xUalmJaR3/qadmds=
+        APP_DEBUG: "false"
+        APP_URL: http://localhost
+        FRONTEND_URL: http://localhost
+        LOG_LEVEL: debug
+        DB_CONNECTION: mysql
+        DB_HOST: db
+        DB_PORT: 3306
+        DB_DATABASE: smart_library
+        DB_USERNAME: user
+        DB_PASSWORD: root
+        VITE_BACKEND_ENDPOINT: http://localhost
+    container_name: book_bloom_app
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

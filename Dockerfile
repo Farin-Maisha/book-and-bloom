@@ -1,5 +1,5 @@
 # Use an official PHP image with Apache
-FROM php:8.2-apache
+FROM php:8.4-apache
 
 # ENV Arguments 
 ARG APP_NAME
@@ -73,8 +73,8 @@ RUN echo "APP_NAME=${APP_NAME}" >> .env && \
     echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
     echo "DB_HOST=${DB_HOST}" >> .env && \
     echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
-    echo "DB_DATABASE=${DB_USERNAME}" >> .env && \
-    echo "DB_DATABASE=${DB_PASSWORD}" >> .env && \
+    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
+    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
     echo "DB_PORT=${DB_PORT}" >> .env
 
 # Set permissions for Laravel storage and cache
