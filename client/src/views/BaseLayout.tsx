@@ -18,7 +18,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     <div className="layout">
       <header className="d-flex align-items-center px-4 py-3 bg-light shadow-sm">
         <Link className="text-decoration-none text-dark" to="/">
-          <h3>📚 Book&Bloom</h3>
+          <h3>Book&Bloom</h3>
         </Link>
         <div className="flex-grow-1"></div>
         <nav>
@@ -28,6 +28,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/books">Books</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/categories">Categories</Link>
             </li>
             {token ? (
               <li className="nav-item">
