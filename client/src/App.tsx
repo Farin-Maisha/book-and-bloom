@@ -1,5 +1,6 @@
 import { Outlet, Route, Routes } from 'react-router';
 import BaseLayout from './views/BaseLayout';
+import Books      from "./views/Books";
 import Home from './views/Home';
 import Login from './views/Login';
 import Signup from './views/Signup';
@@ -20,6 +21,7 @@ function App() {
         >
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/books"      element={<Books />} />
           <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
