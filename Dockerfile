@@ -64,6 +64,7 @@ RUN composer install
 
 # Set environment variables for server
 RUN touch .env
+RUN echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_NOTICE" > /usr/local/etc/php/conf.d/custom.ini
 RUN echo "APP_NAME=${APP_NAME}" >> .env && \
     echo "APP_ENV=${APP_ENV}" >> .env && \
     echo "APP_KEY=${APP_KEY}" >> .env && \
