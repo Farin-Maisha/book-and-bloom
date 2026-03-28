@@ -123,10 +123,21 @@ export default function Books() {
   const [toast, setToast]     = useState<string | null>(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const categoryName = params.get('category');
+    
     api.getBooks()
       .then((data) => {
-  if (data) setBooks(data.data || []);
-})
+        if (data) {
+          let allBooks = data.books || [];
+          if (categoryName) {
+            allBooks = allBooks.filter((b: any) => 
+              b.category?.name?.toLowerCase() === categoryName.toLowerCase()
+            );
+          }
+          setBooks(allBooks);
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -150,7 +161,7 @@ export default function Books() {
       setToast(`"${book.title}" has been added to your library! 📚`);
       setTimeout(() => setToast(null), 3500);
       // Refresh to get updated available_copies
-      api.getBooks().then((data) => { if (data) setBooks(data); });
+     api.getBooks().then((data) => { if (data) setBooks(data.books || []); });
     }
   };
 

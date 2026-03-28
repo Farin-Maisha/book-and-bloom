@@ -93,7 +93,7 @@ export default function Categories() {
   useEffect(() => {
     api.getCategories()
       .then((data) => {
-  if (data) setCategories(data.data || []);
+  if (data) setCategories(data.categories || []);
 })
       .finally(() => setLoading(false));
   }, []);

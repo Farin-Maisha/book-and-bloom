@@ -73,6 +73,7 @@ export default function Signup() {
           className="form-control mb-3 text-center"
           value={input.name}
           onChange={handleChange}
+           autoComplete="off"
         />
         <input
           type="email"
