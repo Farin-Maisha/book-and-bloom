@@ -21,6 +21,8 @@ class ApiClient {
     });
   }
 
+  // ── Auth ────────────────────────────────────────────────────────────────────
+
   async signup(name: string, email: string, password: string) {
     try {
       const response = await this.client.post('/api/signup', { name, email, password });
@@ -47,6 +49,59 @@ class ApiClient {
       this.handleError(error);
     }
   }
+
+  // ── Books ───────────────────────────────────────────────────────────────────
+
+  async getBooks() {
+    try {
+      const response = await this.client.get('/api/books');
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getBook(id: number) {
+    try {
+      const response = await this.client.get(`/api/books/${id}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // ── Categories ──────────────────────────────────────────────────────────────
+
+  async getCategories() {
+    try {
+      const response = await this.client.get('/api/categories');
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // ── Borrow ──────────────────────────────────────────────────────────────────
+
+  async borrowBook(bookId: number) {
+    try {
+      const response = await this.client.post(`/api/borrow/${bookId}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getMyBorrows() {
+    try {
+      const response = await this.client.get('/api/my-borrows');
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // ── Error handler ───────────────────────────────────────────────────────────
 
   handleError(error: any) {
     if (error.response) {
