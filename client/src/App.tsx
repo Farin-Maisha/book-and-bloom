@@ -1,6 +1,7 @@
 import { Outlet, Route, Routes } from 'react-router';
 import BaseLayout from './views/BaseLayout';
 import Books      from "./views/Books";
+import About       from './views/About';
 import Home from './views/Home';
 import Login from './views/Login';
 import Categories from "./views/Categories";
@@ -24,6 +25,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/books"      element={<Books />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/about"      element={<About />}      />
+
           <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
