@@ -5,6 +5,7 @@ import About       from './views/About';
 import Home from './views/Home';
 import Login from './views/Login';
 import Categories from "./views/Categories";
+import MyLibrary   from './views/MyLibrary';
 import Signup from './views/Signup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/books"      element={<Books />} />
+          <Route path="/my-library" element={<MyLibrary />}  />
           <Route path="/categories" element={<Categories />} />
           <Route path="/about"      element={<About />}      />
 
