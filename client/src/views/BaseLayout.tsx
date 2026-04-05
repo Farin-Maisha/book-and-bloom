@@ -1,5 +1,7 @@
-import { ReactNode }          from "react";
+import LibraryBot                         from "./LibraryBot";
+import { ReactNode }                      from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -150,6 +152,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         </footer>
 
       </div>
+
+      {/* ── AI Library Assistant — floats on every page ──────────────────── */}
+      {/* Placed outside the flex column so position:fixed works correctly    */}
+      <LibraryBot />
     </>
   );
 };
