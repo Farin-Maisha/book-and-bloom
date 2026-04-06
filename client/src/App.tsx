@@ -8,8 +8,11 @@ import Categories from "./views/Categories";
 import MyLibrary   from './views/MyLibrary';
 import Admin       from './views/Admin';
 import Signup from './views/Signup';
+import BookDetail from "./views/BookDetail";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -30,6 +33,7 @@ function App() {
           <Route path="/admin"      element={<Admin />}      />
           <Route path="/categories" element={<Categories />} />
           <Route path="/about"      element={<About />}      />
+          <Route path="/books/:id" element={<BookDetail />} />
 
           <Route path="/signup" element={<Signup />} />
         </Route>
