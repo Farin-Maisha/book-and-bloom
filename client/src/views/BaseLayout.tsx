@@ -79,6 +79,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             <Link className="nav-link-item" to="/"           style={navLinkStyle("/")}>Home</Link>
             <Link className="nav-link-item" to="/books"      style={navLinkStyle("/books")}>Books</Link>
             <Link className="nav-link-item" to="/categories" style={navLinkStyle("/categories")}>Categories</Link>
+            <Link className="nav-link-item" to="/events"     style={navLinkStyle("/events")}>Events</Link>
 
             {/* My Library — only show when logged in */}
             {token && (
