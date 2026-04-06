@@ -104,6 +104,58 @@ class ApiClient {
     }
   }
 
+  // ── Return ─────────────────────────────────────────────────────────────────
+
+  async returnBook(borrowId: number) {
+    try {
+      const response = await this.client.post(`/api/return/${borrowId}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // ── Admin ────────────────────────────────────────────────────────────────────
+
+  async getAdminStats() {
+    try {
+      const response = await this.client.get('/api/admin/stats');
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getAllBorrows() {
+    try {
+      const response = await this.client.get('/api/admin/borrows');
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async addBook(book: {
+    title: string; author: string; cover_image?: string;
+    category_id?: number | string; description?: string; available_copies: number;
+  }) {
+    try {
+      const response = await this.client.post('/api/books', book);
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteBook(id: number) {
+    try {
+      const response = await this.client.delete(`/api/books/${id}`);
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   // ── Error handler ───────────────────────────────────────────────────────────
 
   handleError(error: any) {
