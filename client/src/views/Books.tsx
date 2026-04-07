@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ApiClient from "../api";
+import ApiClient          from "../api";
+import ReservationModal   from "../ReservationModal";
 
 const api = new ApiClient();
 
@@ -52,7 +53,7 @@ function SkeletonCard() {
 }
 
 // ── BookCard ──────────────────────────────────────────────────────────────────
-function BookCard({ book, onBorrow }: { book: Book; onBorrow: (b: Book) => void }) {
+function BookCard({ book, onReserve }: { book: Book; onReserve: (b: Book) => void }) {
   const [hovered, setHovered] = useState(false);
   const navigate    = useNavigate();
   const isAvailable = book.available_copies > 0;
@@ -90,7 +91,7 @@ function BookCard({ book, onBorrow }: { book: Book; onBorrow: (b: Book) => void 
       </div>
 
       {/* Title */}
-      <p style={{ fontFamily: "'Lato',sans-serif", fontSize: 11, color: "#6B3A2A", textAlign: "center", maxWidth: 110, lineHeight: 1.4, margin: 0, opacity: hovered ? 1 : 0.7, transition: "opacity .2s", fontWeight: hovered ? 700 : 400 }}>
+      <p style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 11, color: "#6B3A2A", textAlign: "center", maxWidth: 110, lineHeight: 1.4, margin: 0, opacity: hovered ? 1 : 0.7, transition: "opacity .2s", fontWeight: hovered ? 600 : 400 }}>
         {book.title.length > 26 ? book.title.slice(0, 24) + "…" : book.title}
       </p>
 
@@ -110,7 +111,7 @@ function BookCard({ book, onBorrow }: { book: Book; onBorrow: (b: Book) => void 
 
       {/* Borrow btn */}
       <button
-        onClick={() => isAvailable && onBorrow(book)}
+        onClick={() => isAvailable && onReserve(book)}
         disabled={!isAvailable}
         style={{
           background: isAvailable ? "linear-gradient(135deg,#C4836A,#A5624C)" : "#D9BFB5",
@@ -124,7 +125,7 @@ function BookCard({ book, onBorrow }: { book: Book; onBorrow: (b: Book) => void 
           boxShadow: isAvailable ? "0 4px 14px rgba(165,98,76,0.3)" : "none",
         }}
       >
-        {isAvailable ? "Borrow" : "Unavailable"}
+        {isAvailable ? "Reserve" : "Unavailable"}
       </button>
     </div>
   );
@@ -155,6 +156,7 @@ export default function Books() {
   const [query, setQuery]           = useState("");
   const [page, setPage]             = useState(1);
   const [toast, setToast]           = useState<string | null>(null);
+  const [reservation, setReservation] = useState<{ bookTitle: string; reservationId: number; pickupDeadline: string } | null>(null);
   const [filterCat, setFilterCat]   = useState<number | "">("");
   const [filterAvail, setFilterAvail] = useState(false);
   const [sortBy, setSortBy]         = useState<"default" | "az" | "za">("default");
@@ -211,11 +213,19 @@ export default function Books() {
 
   const goToPage = (p: number) => { setPage(p); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
-  const handleBorrow = async (book: Book) => {
-    const result = await api.borrowBook(book.id);
-    if (result) {
-      setToast(`"${book.title}" added to your library! 📚`);
-      setTimeout(() => setToast(null), 3500);
+  const handleReserve = async (book: Book) => {
+    const token = localStorage.getItem("token");
+    if (!token) { setToast("Please login to reserve a book."); setTimeout(() => setToast(null), 3000); return; }
+    const result = await api.reserveBook(book.id);
+    if (result?.reservation) {
+      // Calculate pickup deadline — 2 days from now
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + 2);
+      setReservation({
+        bookTitle:       book.title,
+        reservationId:   result.reservation.id,
+        pickupDeadline:  deadline.toISOString().split("T")[0],
+      });
       fetchBooks(filterCat !== "" ? filterCat as number : undefined);
     }
   };
@@ -384,7 +394,7 @@ export default function Books() {
           <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center", maxWidth: 1020, margin: "0 auto" }}>
             {visible.map((book, i) => (
               <div key={book.id} className="book-card-appear" style={{ animationDelay: `${i * 0.055}s` }}>
-                <BookCard book={book} onBorrow={handleBorrow} />
+                <BookCard book={book} onReserve={handleReserve} />
               </div>
             ))}
           </div>
@@ -472,6 +482,14 @@ export default function Books() {
       </div>
 
       {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
+      {reservation && (
+        <ReservationModal
+          bookTitle={reservation.bookTitle}
+          reservationId={reservation.reservationId}
+          pickupDeadline={reservation.pickupDeadline}
+          onClose={() => setReservation(null)}
+        />
+      )}
     </>
   );
 }

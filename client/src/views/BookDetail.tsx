@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import ApiClient from "../api";
+import ApiClient        from "../api";
+import ReservationModal from "../ReservationModal";
 
 const api = new ApiClient();
 
@@ -39,7 +40,8 @@ export default function BookDetail() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [toast, setToast]     = useState<string | null>(null);
-  const [borrowing, setBorrowing] = useState(false);
+  const [borrowing, setBorrowing]   = useState(false);
+  const [reservation, setReservation] = useState<{ bookTitle: string; reservationId: number; pickupDeadline: string } | null>(null);
 
   useEffect(() => {
     api.getBook(Number(id))
@@ -51,14 +53,20 @@ export default function BookDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const handleBorrow = async () => {
+  const handleReserve = async () => {
     if (!book) return;
+    const token = localStorage.getItem("token");
+    if (!token) { setToast("Please login to reserve a book."); setTimeout(() => setToast(null), 3000); return; }
     setBorrowing(true);
-    const result = await api.borrowBook(book.id);
-    if (result) {
-      setToast(`"${book.title}" added to your library! 📚`);
-      setTimeout(() => setToast(null), 3500);
-      // Refresh book to update available_copies
+    const result = await api.reserveBook(book.id);
+    if (result?.reservation) {
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + 2);
+      setReservation({
+        bookTitle:      book.title,
+        reservationId:  result.reservation.id,
+        pickupDeadline: deadline.toISOString().split("T")[0],
+      });
       api.getBook(book.id).then((data) => { if (data?.success) setBook(data.book); });
     }
     setBorrowing(false);
@@ -209,7 +217,7 @@ export default function BookDetail() {
             {/* Borrow button */}
             <button
               className="borrow-btn"
-              onClick={handleBorrow}
+              onClick={handleReserve}
               disabled={!isAvailable || borrowing}
               style={{
                 alignSelf: "flex-start",
@@ -222,13 +230,21 @@ export default function BookDetail() {
                 letterSpacing: 0.5,
               }}
             >
-              {borrowing ? "Borrowing…" : isAvailable ? "Borrow this Book" : "Currently Unavailable"}
+              {borrowing ? "Reserving…" : isAvailable ? "Reserve this Book" : "Currently Unavailable"}
             </button>
           </div>
         </div>
       </div>
 
       {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
+      {reservation && (
+        <ReservationModal
+          bookTitle={reservation.bookTitle}
+          reservationId={reservation.reservationId}
+          pickupDeadline={reservation.pickupDeadline}
+          onClose={() => setReservation(null)}
+        />
+      )}
     </>
   );
 }
