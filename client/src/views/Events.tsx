@@ -18,42 +18,42 @@ interface Event {
 // ── Mock events — replace with api.getEvents() when backend is ready ──────────
 const EVENTS: Event[] = [
   {
-    id: 1, icon: "📖",
+    id: 1, icon: " ",
     title: "Book Club: The Midnight Library",
     description: "Join us for a cozy discussion of Matt Haig's heartwarming novel about second chances and infinite possibilities.",
     date: "2026-04-15", time: "6:00 PM", location: "Reading Room B",
     tag: "Book Club", tagColor: "#C8B8E8", seats: 20, seatsLeft: 7,
   },
   {
-    id: 2, icon: "✍️",
+    id: 2, icon: " ",
     title: "Creative Writing Workshop",
     description: "A hands-on workshop for aspiring writers. Bring a notebook and leave with the first page of your story.",
     date: "2026-04-20", time: "3:00 PM", location: "Workshop Hall",
     tag: "Workshop", tagColor: "#B8D8B8", seats: 15, seatsLeft: 3,
   },
   {
-    id: 3, icon: "🎤",
+    id: 3, icon: " ",
     title: "Author Talk: Vaishnavi Patel",
     description: "Meet the author of Kaikeyi as she discusses mythology, feminism, and the craft of retelling ancient stories.",
     date: "2026-04-28", time: "5:30 PM", location: "Main Hall",
     tag: "Author Talk", tagColor: "#F0D8A8", seats: 50, seatsLeft: 22,
   },
   {
-    id: 4, icon: "🧒",
+    id: 4, icon: " ",
     title: "Children's Story Hour",
     description: "A magical reading session for children aged 5–10. Stories, songs, and a craft activity included!",
     date: "2026-05-03", time: "11:00 AM", location: "Children's Corner",
     tag: "Kids", tagColor: "#FAC8C8", seats: 30, seatsLeft: 18,
   },
   {
-    id: 5, icon: "🔍",
+    id: 5, icon: " ",
     title: "Mystery Night: Guess the Ending",
     description: "Read the first half of a mystery novel and guess the ending before the librarian reveals all!",
     date: "2026-05-10", time: "7:00 PM", location: "Reading Room A",
     tag: "Book Club", tagColor: "#C8B8E8", seats: 25, seatsLeft: 14,
   },
   {
-    id: 6, icon: "🌍",
+    id: 6, icon: " ",
     title: "Travel Writing Seminar",
     description: "Learn to capture your adventures in words. For travel lovers and writers at all levels.",
     date: "2026-05-17", time: "2:00 PM", location: "Workshop Hall",
@@ -135,8 +135,8 @@ function EventCard({ event, onRegister }: { event: Event; onRegister: (e: Event)
       {/* Meta info */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
         {[
-          { icon: "📅", text: fmtDate(event.date) },
-          { icon: "🕐", text: event.time },
+          { icon: " ", text: fmtDate(event.date) },
+          { icon: " ", text: event.time },
           { icon: "📍", text: event.location },
         ].map(({ icon, text }) => (
           <span key={text} style={{ fontFamily: "'Lato',sans-serif", fontSize: 12, color: "#8B5E52", display: "flex", alignItems: "center", gap: 5 }}>
