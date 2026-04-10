@@ -13,16 +13,13 @@ class Book extends Model
         'title',
         'author',
         'cover_image',
-        'category_id',
+        'genre',
         'description',
-        'available_copies'
+        'pdf_url',
+        'available_copies',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
+    
     public function borrows()
     {
         return $this->hasMany(Borrow::class);

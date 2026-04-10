@@ -14,11 +14,17 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password'
+        'password',
+        'is_admin'
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    protected $casts = [
+    'is_admin' => 'boolean',
+    'email_verified_at' => 'datetime',
+];
 }

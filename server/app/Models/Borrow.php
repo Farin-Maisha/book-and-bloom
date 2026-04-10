@@ -10,12 +10,20 @@ class Borrow extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'book_id',
-        'borrowed_at',
-        'returned_at'
-    ];
+    'user_id',
+    'book_id',
+    'borrowed_at',
+    'returned_at',
+    'fine_amount',
+    'fine_paid',
+    'payment_method',
+    'paid_at',
+];
 
+protected $casts = [
+    'fine_paid' => 'boolean',
+    'fine_amount' => 'float',
+];
     public function user()
     {
         return $this->belongsTo(User::class);
