@@ -13,20 +13,26 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'name'     => 'required',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|min:6'
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'is_admin' => false,   // ← always false on self-registration
         ]);
 
         return response()->json([
             'message' => 'Signup successful',
-            'user' => $user
+            'user'    => [
+                'id'       => $user->id,
+                'name'     => $user->name,
+                'email'    => $user->email,
+                'is_admin' => $user->is_admin,
+            ]
         ]);
     }
 
@@ -45,7 +51,27 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user' => $user
+            'user'  => [
+                'id'       => $user->id,
+                'name'     => $user->name,
+                'email'    => $user->email,
+                'is_admin' => $user->is_admin,  // ← Admin.tsx reads this
+            ]
+        ]);
+    }
+
+    // GET /api/user  ← called by Admin.tsx on mount
+    public function getUser(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'user' => [
+                'id'       => $user->id,
+                'name'     => $user->name,
+                'email'    => $user->email,
+                'is_admin' => $user->is_admin,  // ← critical for admin guard
+            ]
         ]);
     }
 
@@ -54,7 +80,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'message' => 'Welcome to Smart Library Dashboard',
-            'user' => $request->user()
+            'user'    => $request->user()
         ]);
     }
 }

@@ -41,6 +41,9 @@ class ApiClient {
     }
   }
 
+  // ✅ FIX: Returns the full response data so Admin.tsx can read
+  // either data.user.is_admin (if AuthController wraps it)
+  // or data.is_admin (if it returns the user directly).
   async getUser() {
     try {
       const response = await this.client.get('/api/user');
@@ -155,6 +158,44 @@ class ApiClient {
       this.handleError(error);
     }
   }
+
+  // Add these to your ApiClient class:
+
+async updateBook(id: number, data: { title: string; author: string; available_copies: number }) {
+  try {
+    const response = await this.client.put(`/api/books/${id}`, data);
+    return response.data;
+  } catch (error) {
+    this.handleError(error);
+  }
+}
+
+async getAuditLogs() {
+  try {
+    const response = await this.client.get('/api/admin/logs');
+    return response.data;
+  } catch (error) {
+    this.handleError(error);
+  }
+}
+
+async confirmFine(borrowId: number) {
+  try {
+    const response = await this.client.post(`/api/admin/borrows/${borrowId}/confirm-fine`);
+    return response.data;
+  } catch (error) {
+    this.handleError(error);
+  }
+}
+
+async payFine(borrowId: number, method: string) {
+  try {
+    const response = await this.client.post(`/api/borrows/${borrowId}/pay-fine`, { payment_method: method });
+    return response.data;
+  } catch (error) {
+    this.handleError(error);
+  }
+}
 
   // ── Error handler ───────────────────────────────────────────────────────────
 
