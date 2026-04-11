@@ -1,3 +1,4 @@
+import ChatBot from "./ChatBot";
 import { ReactNode }                      from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
@@ -127,6 +128,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             ))}
           </div>
         </footer>
+        <ChatBot />  
       </div>
     </>
   );
