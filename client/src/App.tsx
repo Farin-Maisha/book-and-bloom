@@ -10,6 +10,7 @@ import Admin       from './views/Admin';
 import Signup from './views/Signup';
 import BookDetail from "./views/BookDetail";
 import Events from "./views/Events";
+import PayFee from "./views/PayFee"; 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
@@ -36,6 +37,7 @@ function App() {
           <Route path="/about"      element={<About />}      />
           <Route path="/books/:id" element={<BookDetail />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/pay-fee" element={<PayFee />} />
 
           <Route path="/signup" element={<Signup />} />
         </Route>

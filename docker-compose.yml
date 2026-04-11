@@ -34,6 +34,16 @@ services:
         DB_USERNAME: user
         DB_PASSWORD: root
         VITE_BACKEND_ENDPOINT: http://localhost
+        VITE_GOOGLE_CLIENT_ID: 96533783876-f3177vp99b3l6jfq7kgjbq9lovtd05r4.apps.googleusercontent.com
+        GOOGLE_CLIENT_ID: 96533783876-f3177vp99b3l6jfq7kgjbq9lovtd05r4.apps.googleusercontent.com
+        MAIL_MAILER: smtp
+        MAIL_HOST: smtp.gmail.com
+        MAIL_PORT: 587
+        MAIL_USERNAME: anika.cse.20230104018@aust.edu
+        MAIL_PASSWORD: hrxioxpwhavtkbbm
+        MAIL_ENCRYPTION: tls
+        MAIL_FROM_ADDRESS: anika.cse.20230104018@aust.edu 
+        MAIL_FROM_NAME: CozyLibrary
     container_name: book_bloom_app
     restart: always
     ports:
