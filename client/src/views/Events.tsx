@@ -1,5 +1,92 @@
 import { useState } from "react";
 
+// ── SVG Icons ─────────────────────────────────────────────────────────────────
+const SvgBookOpen = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4836A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+  </svg>
+);
+
+const SvgPen = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7BA077" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+  </svg>
+);
+
+const SvgMic = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A050" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+    <line x1="12" y1="19" x2="12" y2="23" />
+    <line x1="8" y1="23" x2="16" y2="23" />
+  </svg>
+);
+
+const SvgUsers = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C07070" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const SvgSearch = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8070A0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
+const SvgGlobe = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7BA077" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const SvgCalendar = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle" }}>
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+const SvgClock = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle" }}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const SvgMapPin = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle" }}>
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+const SvgCheck = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }}>
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+// ── Icon map by event id ──────────────────────────────────────────────────────
+const EVENT_ICONS: Record<number, React.ReactNode> = {
+  1: <SvgBookOpen />,
+  2: <SvgPen />,
+  3: <SvgMic />,
+  4: <SvgUsers />,
+  5: <SvgSearch />,
+  6: <SvgGlobe />,
+};
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Event {
   id: number;
@@ -12,48 +99,47 @@ interface Event {
   tagColor: string;
   seats: number;
   seatsLeft: number;
-  icon: string;
 }
 
 // ── Mock events — replace with api.getEvents() when backend is ready ──────────
 const EVENTS: Event[] = [
   {
-    id: 1, icon: "📖",
+    id: 1,
     title: "Book Club: The Midnight Library",
     description: "Join us for a cozy discussion of Matt Haig's heartwarming novel about second chances and infinite possibilities.",
     date: "2026-04-15", time: "6:00 PM", location: "Reading Room B",
     tag: "Book Club", tagColor: "#C8B8E8", seats: 20, seatsLeft: 7,
   },
   {
-    id: 2, icon: "✍️",
+    id: 2,
     title: "Creative Writing Workshop",
     description: "A hands-on workshop for aspiring writers. Bring a notebook and leave with the first page of your story.",
     date: "2026-04-20", time: "3:00 PM", location: "Workshop Hall",
     tag: "Workshop", tagColor: "#B8D8B8", seats: 15, seatsLeft: 3,
   },
   {
-    id: 3, icon: "🎤",
+    id: 3,
     title: "Author Talk: Vaishnavi Patel",
     description: "Meet the author of Kaikeyi as she discusses mythology, feminism, and the craft of retelling ancient stories.",
     date: "2026-04-28", time: "5:30 PM", location: "Main Hall",
     tag: "Author Talk", tagColor: "#F0D8A8", seats: 50, seatsLeft: 22,
   },
   {
-    id: 4, icon: "🧒",
+    id: 4,
     title: "Children's Story Hour",
-    description: "A magical reading session for children aged 5–10. Stories, songs, and a craft activity included!",
+    description: "A magical reading session for children aged 5-10. Stories, songs, and a craft activity included!",
     date: "2026-05-03", time: "11:00 AM", location: "Children's Corner",
     tag: "Kids", tagColor: "#FAC8C8", seats: 30, seatsLeft: 18,
   },
   {
-    id: 5, icon: "🔍",
+    id: 5,
     title: "Mystery Night: Guess the Ending",
     description: "Read the first half of a mystery novel and guess the ending before the librarian reveals all!",
     date: "2026-05-10", time: "7:00 PM", location: "Reading Room A",
     tag: "Book Club", tagColor: "#C8B8E8", seats: 25, seatsLeft: 14,
   },
   {
-    id: 6, icon: "🌍",
+    id: 6,
     title: "Travel Writing Seminar",
     description: "Learn to capture your adventures in words. For travel lovers and writers at all levels.",
     date: "2026-05-17", time: "2:00 PM", location: "Workshop Hall",
@@ -96,7 +182,9 @@ function EventCard({ event, onRegister }: { event: Event; onRegister: (e: Event)
     >
       {/* Top row */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-        <span style={{ fontSize: 32, flexShrink: 0 }}>{event.icon}</span>
+        <span style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 12, background: "#FFF0E8" }}>
+          {EVENT_ICONS[event.id] || <SvgBookOpen />}
+        </span>
         <div style={{ flex: 1 }}>
           {/* Tag pill */}
           <span style={{
@@ -135,12 +223,12 @@ function EventCard({ event, onRegister }: { event: Event; onRegister: (e: Event)
       {/* Meta info */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
         {[
-          { icon: "📅", text: fmtDate(event.date) },
-          { icon: "🕐", text: event.time },
-          { icon: "📍", text: event.location },
+          { icon: <SvgCalendar />, text: fmtDate(event.date) },
+          { icon: <SvgClock />, text: event.time },
+          { icon: <SvgMapPin />, text: event.location },
         ].map(({ icon, text }) => (
           <span key={text} style={{ fontFamily: "'Lato',sans-serif", fontSize: 12, color: "#8B5E52", display: "flex", alignItems: "center", gap: 5 }}>
-            <span>{icon}</span> {text}
+            {icon} {text}
           </span>
         ))}
       </div>
@@ -176,7 +264,7 @@ function EventCard({ event, onRegister }: { event: Event; onRegister: (e: Event)
             opacity: hovered && !full ? 0.9 : 1,
           }}
         >
-          {full ? "Full" : "Register →"}
+          {full ? "Full" : "Register \u2192"}
         </button>
       </div>
     </div>
@@ -192,9 +280,11 @@ function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {
       borderRadius: 999, fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 14,
       boxShadow: "0 8px 40px rgba(107,58,42,0.3)", zIndex: 9999,
       animation: "fadeUp .3s ease", whiteSpace: "nowrap",
+      display: "flex", alignItems: "center", gap: 8,
     }}>
+      <SvgCheck />
       {msg}
-      <button onClick={onClose} style={{ marginLeft: 14, background: "none", border: "none", color: "#FFF8F0", cursor: "pointer", fontSize: 18 }}>×</button>
+      <button onClick={onClose} style={{ marginLeft: 14, background: "none", border: "none", color: "#FFF8F0", cursor: "pointer", fontSize: 18 }}>\u00d7</button>
     </div>
   );
 }
@@ -212,7 +302,7 @@ export default function Events() {
   const handleRegister = (event: Event) => {
     if (registered.includes(event.id)) return;
     setRegistered((prev) => [...prev, event.id]);
-    setToast(`You're registered for "${event.title}"! 🎉`);
+    setToast(`You're registered for "${event.title}"!`);
     setTimeout(() => setToast(null), 3500);
   };
 
