@@ -7,9 +7,14 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\AdminController;
 
+
 // ── Public routes ──────────────────────────────────────────────────────────────
-Route::post('/signup', [AuthController::class, 'signup']);
-Route::post('/login',  [AuthController::class, 'login']);
+Route::post('/signup',         [AuthController::class, 'signup']);
+
+Route::post('/login',          [AuthController::class, 'login']);
+Route::post('/pay-fee',        [AuthController::class, 'payFee']);
+Route::post('/auth/google',    [AuthController::class, 'googleAuth']);
+
 
 Route::get('/books',      [BookController::class, 'index']);
 Route::get('/books/{id}', [BookController::class, 'show']);

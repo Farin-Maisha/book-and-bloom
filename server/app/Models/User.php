@@ -15,16 +15,24 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin'
+        'is_admin',
+        'google_id',
+        'email_verified_at',
+        'verification_code',
+        'verification_expires_at',
+        'registration_fee_paid',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_code',
     ];
 
     protected $casts = [
-    'is_admin' => 'boolean',
-    'email_verified_at' => 'datetime',
-];
+        'is_admin'             => 'boolean',
+        'email_verified_at'    => 'datetime',
+        'verification_expires_at' => 'datetime',
+        'registration_fee_paid' => 'boolean',
+    ];
 }

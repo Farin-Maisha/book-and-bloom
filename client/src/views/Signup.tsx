@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ApiClient from "../api";
 import toast from "react-hot-toast";
@@ -10,25 +10,76 @@ export default function Signup() {
   const [input, setInput] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    (window as any).handleGoogleCredentialResponse = async (response: any) => {
+      setLoading(true);
+      const data = await apiClient.googleAuth(response.credential);
+      setLoading(false);
+
+      if (data?.token) {
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user)); // ← ADD THIS
+  toast.success("Welcome!");
+  navigate("/");
+      } else if (data?.needs_payment) {
+        navigate(`/pay-fee?userId=${data.user_id}`);
+      } else if (data?.message) {
+        toast.error(data.message);
+      } else {
+        toast.error("Google sign-in failed");
+      }
+    };
+
+    const initGoogle = () => {
+      if ((window as any).google) {
+        (window as any).google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: (window as any).handleGoogleCredentialResponse,
+        });
+        (window as any).google.accounts.id.renderButton(
+          document.getElementById("google-signup-btn"),
+          { theme: "outline", size: "large", width: "300", text: "signup_with" }
+        );
+      }
+    };
+
+    if ((window as any).google) {
+      initGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if ((window as any).google) {
+          initGoogle();
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
-    console.log("clicked!", input);
-    
     if (!input.name || !input.email || !input.password) {
       toast.error("Please fill in all fields");
+      return;
+    }
+    if (!input.password.includes("@")) {
+      toast.error("Password must contain at least one @ symbol");
+      return;
+    }
+    if (input.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
     setLoading(true);
     const data = await apiClient.signup(input.name, input.email, input.password);
-    console.log("Response:", data);
     setLoading(false);
 
-    if (data?.user) {
+    if (data?.success) {
       toast.success("Account created! Please login.");
       navigate("/login");
     } else if (data?.message) {
@@ -36,27 +87,29 @@ export default function Signup() {
     }
   };
 
+  const cardStyle: React.CSSProperties = {
+    border: "2px solid #222",
+    borderRadius: "1.5rem",
+    width: "350px",
+    backgroundColor: "#fff",
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    backgroundColor: "#f5c5c5",
+    border: "1px solid #e0a0a0",
+  };
+
   return (
     <div
       className="d-flex justify-content-center align-items-center py-5"
       style={{ backgroundColor: "#fdf6ec", minHeight: "80vh" }}
     >
-      <div
-        className="p-4 text-center"
-        style={{
-          border: "2px solid #222",
-          borderRadius: "1.5rem",
-          width: "350px",
-          backgroundColor: "#fff",
-        }}
-      >
+      <div className="p-4 text-center" style={cardStyle}>
         <div
           className="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
           style={{
-            width: "70px", height: "70px",
-            backgroundColor: "#f5c5c5",
-            fontSize: "2rem",
-            border: "2px solid #222",
+            width: "70px", height: "70px", backgroundColor: "#f5c5c5",
+            fontSize: "2rem", border: "2px solid #222",
           }}
         >
           📚
@@ -66,6 +119,14 @@ export default function Signup() {
           Join your cozy reading corner
         </p>
 
+        <div id="google-signup-btn" className="d-flex justify-content-center mb-3"></div>
+
+        <div className="d-flex align-items-center mb-3">
+          <hr className="flex-grow-1" />
+          <span className="px-2 text-muted" style={{ fontSize: "0.8rem" }}>or</span>
+          <hr className="flex-grow-1" />
+        </div>
+
         <input
           type="text"
           name="name"
@@ -73,7 +134,7 @@ export default function Signup() {
           className="form-control mb-3 text-center"
           value={input.name}
           onChange={handleChange}
-           autoComplete="off"
+          autoComplete="off"
         />
         <input
           type="email"
@@ -86,15 +147,18 @@ export default function Signup() {
         <input
           type="password"
           name="password"
-          placeholder="🔒  Password"
-          className="form-control mb-4 text-center"
+          placeholder="🔒  Password (must contain @)"
+          className="form-control mb-1 text-center"
           value={input.password}
           onChange={handleChange}
         />
+        <p className="text-muted mb-3" style={{ fontSize: "0.75rem" }}>
+          Password must contain at least one @ symbol and be 6+ characters
+        </p>
 
         <button
           className="btn w-100 py-2"
-          style={{ backgroundColor: "#f5c5c5", border: "1px solid #e0a0a0" }}
+          style={btnPrimary}
           onClick={handleSubmit}
           disabled={loading}
         >
@@ -103,9 +167,7 @@ export default function Signup() {
 
         <p className="mt-3 text-muted" style={{ fontSize: "0.9rem" }}>
           Already have an account?{" "}
-          <Link to="/login" style={{ color: "#b05a7a" }}>
-            Login
-          </Link>
+          <Link to="/login" style={{ color: "#b05a7a" }}>Login</Link>
         </p>
       </div>
     </div>
