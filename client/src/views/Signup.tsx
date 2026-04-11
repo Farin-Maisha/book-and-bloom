@@ -5,6 +5,35 @@ import toast from "react-hot-toast";
 
 const apiClient = new ApiClient();
 
+// ── SVG Icons ─────────────────────────────────────────────────────────────────
+const IconBook = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#b05a7a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+  </svg>
+);
+
+const IconUser = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: 6 }}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const IconMail = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: 6 }}>
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+);
+
+const IconLock = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: 6 }}>
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
 export default function Signup() {
   const navigate = useNavigate();
   const [input, setInput] = useState({ name: "", email: "", password: "" });
@@ -109,10 +138,10 @@ export default function Signup() {
           className="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
           style={{
             width: "70px", height: "70px", backgroundColor: "#f5c5c5",
-            fontSize: "2rem", border: "2px solid #222",
+            border: "2px solid #222",
           }}
         >
-          📚
+          <IconBook />
         </div>
 
         <p className="text-muted mb-4" style={{ color: "#b05a7a" }}>
@@ -127,31 +156,43 @@ export default function Signup() {
           <hr className="flex-grow-1" />
         </div>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="👤  Full Name"
-          className="form-control mb-3 text-center"
-          value={input.name}
-          onChange={handleChange}
-          autoComplete="off"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="📧  Email"
-          className="form-control mb-3 text-center"
-          value={input.email}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="🔒  Password (must contain @)"
-          className="form-control mb-1 text-center"
-          value={input.password}
-          onChange={handleChange}
-        />
+        <div className="mb-3" style={{ position: "relative" }}>
+          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }}><IconUser /></span>
+          <input
+            type="text"
+            name="name"
+            placeholder="  Full Name"
+            className="form-control text-center"
+            value={input.name}
+            onChange={handleChange}
+            autoComplete="off"
+            style={{ paddingLeft: 38 }}
+          />
+        </div>
+        <div className="mb-3" style={{ position: "relative" }}>
+          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }}><IconMail /></span>
+          <input
+            type="email"
+            name="email"
+            placeholder="  Email"
+            className="form-control text-center"
+            value={input.email}
+            onChange={handleChange}
+            style={{ paddingLeft: 38 }}
+          />
+        </div>
+        <div className="mb-1" style={{ position: "relative" }}>
+          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }}><IconLock /></span>
+          <input
+            type="password"
+            name="password"
+            placeholder="  Password (must contain @)"
+            className="form-control text-center"
+            value={input.password}
+            onChange={handleChange}
+            style={{ paddingLeft: 38 }}
+          />
+        </div>
         <p className="text-muted mb-3" style={{ fontSize: "0.75rem" }}>
           Password must contain at least one @ symbol and be 6+ characters
         </p>
