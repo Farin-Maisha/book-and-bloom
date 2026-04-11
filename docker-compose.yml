@@ -44,6 +44,7 @@ services:
         MAIL_ENCRYPTION: tls
         MAIL_FROM_ADDRESS: anika.cse.20230104018@aust.edu 
         MAIL_FROM_NAME: CozyLibrary
+        VITE_GROK_API_KEY: AIzaSyAHO0_h3TJpd-85Bmc9FvwBHLzKuW902kM
     container_name: book_bloom_app
     restart: always
     ports:
