@@ -80,7 +80,7 @@ const IconPhone = () => (
   </svg>
 );
 
-// ── Quick-reply suggestions ──────────────────────────────────────────────────
+// ── Quick-reply suggestions ───────────────────────────────────────────────────
 const QUICK_REPLIES = [
   { label: "Opening hours", icon: <IconClock /> },
   { label: "Location", icon: <IconMapPin /> },
@@ -89,6 +89,49 @@ const QUICK_REPLIES = [
   { label: "Membership fee", icon: <IconDollar /> },
   { label: "Contact info", icon: <IconPhone /> },
 ];
+
+// ── Grok API call ─────────────────────────────────────────────────────────────
+const askGrok = async (userMessage: string): Promise<string> => {
+  const apiKey = import.meta.env.VITE_GROK_API_KEY;
+
+  if (!apiKey) {
+    return "API key is missing. Please check your .env.local file.";
+  }
+
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      system_instruction: {
+        parts: [{
+          text: `You are Bloom, a friendly assistant for Book&Bloom library in Dhaka, Bangladesh.
+You only answer library-related questions. Here is all the information you know:
+- Opening hours: Saturday to Thursday, 9 AM to 8 PM. Closed on Fridays.
+- Location: 42 Banani Road, Dhaka 1213. Next to Banani park.
+- Membership fee: 500 taka per year. Borrow up to 3 books for 14 days.
+- Late return fine: 10 taka per day.
+- Contact: Phone +880 1700-123456, Email hello@bookandbloom.com.
+- Events: Storytelling every Saturday 4 PM, book swap every Wednesday 6 PM.
+Keep answers short, warm and friendly. Only answer library-related questions.`
+        }]
+      },
+      contents: [{
+        parts: [{ text: userMessage }]
+      }]
+    }),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json();
+    console.error("Gemini error:", errData);
+    throw new Error(`API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+};
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const ChatBot: React.FC = () => {
@@ -120,7 +163,8 @@ const ChatBot: React.FC = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleSend = () => {
+  // ── Send message handler (calls real Grok API) ────────────────────────────
+  const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed) return;
 
@@ -134,20 +178,30 @@ const ChatBot: React.FC = () => {
     setInput("");
     setIsTyping(true);
 
-    // TODO: Replace this with actual API call later
-    setTimeout(() => {
+    try {
+      const replyText = await askGrok(trimmed);
       const botReply: Message = {
         id: Date.now() + 1,
-        text: getBotReply(trimmed),
+        text: replyText,
         sender: "bot",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, botReply]);
+    } catch (error) {
+      const errorMsg: Message = {
+        id: Date.now() + 1,
+        text: "Sorry, I'm having trouble connecting right now. Please try again!",
+        sender: "bot",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
-  const handleQuickReply = (label: string) => {
+  // ── Quick reply handler (calls real Grok API) ─────────────────────────────
+  const handleQuickReply = async (label: string) => {
     const userMsg: Message = {
       id: Date.now(),
       text: label,
@@ -157,16 +211,26 @@ const ChatBot: React.FC = () => {
     setMessages((prev) => [...prev, userMsg]);
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const replyText = await askGrok(label);
       const botReply: Message = {
         id: Date.now() + 1,
-        text: getBotReply(label),
+        text: replyText,
         sender: "bot",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, botReply]);
+    } catch (error) {
+      const errorMsg: Message = {
+        id: Date.now() + 1,
+        text: "Sorry, something went wrong. Please try again!",
+        sender: "bot",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -509,7 +573,7 @@ const ChatBot: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Replies */}
+          {/* Quick Replies — shown only at the start */}
           {messages.length <= 2 && (
             <div className="bloom-quick-replies">
               {QUICK_REPLIES.map((reply) => (
@@ -541,7 +605,7 @@ const ChatBot: React.FC = () => {
             <button
               className="bloom-send-btn"
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isTyping}
               aria-label="Send message"
             >
               <IconSend />
@@ -554,38 +618,3 @@ const ChatBot: React.FC = () => {
 };
 
 export default ChatBot;
-
-// ── Temporary local replies (will be replaced by API) ─────────────────────────
-const getBotReply = (userText: string): string => {
-  const text = userText.toLowerCase();
-
-  if (text.includes("hour") || text.includes("opening") || text.includes("time")) {
-    return "We're open Saturday\u2013Thursday, 9 AM \u2013 8 PM. Friday is our day off! Come visit us anytime.";
-  }
-  if (text.includes("location") || text.includes("address") || text.includes("where")) {
-    return "We're located at 42 Banani Road, Dhaka 1213. Right next to the Banani park \u2014 you can't miss us!";
-  }
-  if (text.includes("new") || text.includes("arrival") || text.includes("collection")) {
-    return "We just got some exciting new books! Check out our Books page for the latest additions. Hint: there's some great fiction this week!";
-  }
-  if (text.includes("event") || text.includes("upcoming")) {
-    return "This Saturday we have a children's storytelling session at 4 PM, and next Wednesday there's a book swap meetup at 6 PM. Check our Events page for more!";
-  }
-  if (text.includes("fee") || text.includes("membership") || text.includes("price") || text.includes("cost")) {
-    return "Annual membership is just \u09F3500. It gives you access to borrow up to 3 books at a time. You can pay online or at the front desk!";
-  }
-  if (text.includes("contact") || text.includes("phone") || text.includes("email") || text.includes("call")) {
-    return "Call us at +880 1700-123456 or email hello@bookandbloom.com. We'd love to hear from you!";
-  }
-  if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
-    return "Hey! Welcome to Book&Bloom. How can I help you today? You can ask about our hours, events, new books, or anything else!";
-  }
-  if (text.includes("thank")) {
-    return "You're welcome! Happy reading! Feel free to ask if you need anything else.";
-  }
-  if (text.includes("borrow") || text.includes("return") || text.includes("fine")) {
-    return "You can borrow up to 3 books for 14 days. Late returns have a fine of \u09F310/day. Return at the front desk or drop-box!";
-  }
-
-  return "Hmm, I'm not sure about that one. You can ask me about our opening hours, location, new books, events, membership, or contacts!";
-};
