@@ -18,13 +18,16 @@ return new class extends Migration
         }
 
         // 2. Make sultanaanika131@gmail.com an admin (upsert so it works even if user doesn't exist yet)
-        DB::table('users')->updateOrInsert(
-            ['email' => 'sultanaanika131@gmail.com'],
-            [
-                'is_admin'   => true,
-                'updated_at' => now(),
-            ]
-        );
+       DB::table('users')->updateOrInsert(
+    ['email' => 'sultanaanika131@gmail.com'],
+    [
+        'name'       => 'Anika',
+        'password'   => Hash::make('admin123'),
+        'is_admin'   => true,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]
+);
     }
 
     public function down(): void
