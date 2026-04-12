@@ -150,6 +150,20 @@ class ApiClient {
     }
   }
 
+  // ── Fine Payment ─────────────────────────────────────────────────────────────
+
+  // Called after OTP verified — submits payment to backend (pending admin confirm)
+  async submitFinePayment(borrowId: number, method: string) {
+    try {
+      const response = await this.client.post(`/api/borrows/${borrowId}/pay-fine`, {
+        payment_method: method, // 'bkash' or 'nagad'
+      });
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   // ── Admin ────────────────────────────────────────────────────────────────────
 
   async getAdminStats() {
@@ -218,15 +232,6 @@ class ApiClient {
     }
   }
 
-  async payFine(borrowId: number, method: string) {
-    try {
-      const response = await this.client.post(`/api/borrows/${borrowId}/pay-fine`, { payment_method: method });
-      return response.data;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
   // ── Error handler ───────────────────────────────────────────────────────────
 
   handleError(error: any): any {
@@ -234,7 +239,6 @@ class ApiClient {
       console.error(`API Error: ${error.response.status} - ${error.response.data?.message}`);
       const data = error.response.data;
 
-      // Don't show a generic toast for business-logic errors the UI handles itself
       const isSilent = data?.needs_payment || data?.needs_verify;
       if (!isSilent) {
         toast.error(data?.message || 'Something went wrong');
