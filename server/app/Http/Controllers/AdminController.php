@@ -105,21 +105,22 @@ class AdminController extends Controller
 
     // POST /api/admin/borrows/{id}/confirm-fine
     public function confirmFine(Request $request, $id)
-    {
-        $this->ensureAdmin($request);
+{
+    $this->ensureAdmin($request);
 
-        $borrow = Borrow::findOrFail($id);
+    $borrow = Borrow::findOrFail($id);
 
-        // Save the fine amount if it wasn't saved yet
-        if ($borrow->fine_amount == 0) {
-            $dueDate     = \Carbon\Carbon::parse($borrow->borrowed_at)->addDays(14);
-            $daysOverdue = now()->diffInDays($dueDate);
+    if ($borrow->fine_amount == 0) {
+        $dueDate     = \Carbon\Carbon::parse($borrow->borrowed_at)->addDays(14);
+        $daysOverdue = (int) now()->diffInDays($dueDate);
+        if ($daysOverdue > 0) {
             $borrow->fine_amount = $daysOverdue * 5;
         }
-
-        $borrow->fine_paid = true;
-        $borrow->save();
-
-        return response()->json(['success' => true]);
     }
+
+    $borrow->fine_paid = true;
+    $borrow->save();
+
+    return response()->json(['success' => true]);
+}
 }

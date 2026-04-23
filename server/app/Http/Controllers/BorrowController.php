@@ -58,7 +58,6 @@ class BorrowController extends Controller
                 $borrowedAt = Carbon::parse($borrow->borrowed_at);
                 $dueDate    = $borrowedAt->copy()->addDays(14);
 
-                // Derive status
                 if ($borrow->returned_at) {
                     $status = 'returned';
                 } elseif (now()->gt($dueDate)) {
@@ -67,7 +66,7 @@ class BorrowController extends Controller
                     $status = 'borrowed';
                 }
 
-                // Auto-calculate fine for overdue
+                // Auto-calculate fine for display (not saved yet)
                 $fineAmount = $borrow->fine_amount;
                 if ($status === 'overdue' && $fineAmount == 0) {
                     $daysOverdue = now()->diffInDays($dueDate);
@@ -109,12 +108,12 @@ class BorrowController extends Controller
             return response()->json(['success' => false, 'message' => 'Already returned'], 400);
         }
 
-        $dueDate     = Carbon::parse($borrow->borrowed_at)->addDays(14);
-        $fineAmount  = 0;
+        $dueDate    = Carbon::parse($borrow->borrowed_at)->addDays(14);
+        $fineAmount = 0;
 
         if (now()->gt($dueDate)) {
             $daysOverdue = now()->diffInDays($dueDate);
-            $fineAmount  = $daysOverdue * 5; // ৳5 per day
+            $fineAmount  = $daysOverdue * 5;
         }
 
         $borrow->update([
@@ -122,7 +121,6 @@ class BorrowController extends Controller
             'fine_amount' => $fineAmount,
         ]);
 
-        // Give the copy back
         $borrow->book->increment('available_copies');
 
         return response()->json([
@@ -136,7 +134,7 @@ class BorrowController extends Controller
     public function payFine(Request $request, $id)
     {
         $request->validate([
-            'payment_method' => 'required|string|in:bKash,Nagad,Rocket',
+            'payment_method' => 'required|string|in:bkash,nagad',
         ]);
 
         $borrow = Borrow::where('id', $id)
@@ -147,11 +145,29 @@ class BorrowController extends Controller
             return response()->json(['success' => false, 'message' => 'Fine already paid'], 400);
         }
 
-        $borrow->update([
-            'payment_method' => $request->payment_method,
-            'paid_at'        => now(),
-        ]);
+        if ($borrow->paid_at) {
+            return response()->json(['success' => false, 'message' => 'Payment already submitted, awaiting confirmation'], 400);
+        }
 
-        return response()->json(['success' => true]);
+        // Persist fine amount to DB if not already saved
+        if ($borrow->fine_amount == 0) {
+            $dueDate     = Carbon::parse($borrow->borrowed_at)->addDays(14);
+            $daysOverdue = (int) now()->diffInDays($dueDate);
+            if (now()->gt($dueDate) && $daysOverdue > 0) {
+                $borrow->fine_amount = $daysOverdue * 5;
+            }
+        }
+
+        $borrow->payment_method = $request->payment_method;
+        $borrow->paid_at        = now();
+        $borrow->save();
+
+        return response()->json([
+            'success'        => true,
+            'message'        => 'Payment submitted. Awaiting admin confirmation.',
+            'fine_amount'    => $borrow->fine_amount,
+            'payment_method' => $borrow->payment_method,
+            'paid_at'        => $borrow->paid_at,
+        ]);
     }
 }
